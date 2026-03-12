@@ -2,9 +2,14 @@ import streamlit as st
 import requests
 import base64
 
+# CHAVE API - declarada no topo para evitar NameError
+OPENROUTER_API_KEY = "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"
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - limpo e estiloso
+# Tema 100% preto - estilo jurídico sério
 st.markdown("""
 <style>
     :root {
@@ -31,49 +36,57 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 100px 0 50px;
+        margin: 120px 0 80px;
+        position: relative;
     }
     .title {
-        font-size: 5.5rem;
+        font-size: 7rem;
         font-weight: 900;
         color: #ffffff;
         text-align: center;
-        letter-spacing: 10px;
+        letter-spacing: 14px;
         text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        text-shadow: 0 0 30px rgba(255,255,255,0.08);
+        display: inline-block;
+    }
+    .justice-emojis {
+        font-size: 5rem;
+        color: rgba(255,255,255,0.4);
+        margin: 0 20px;
+        vertical-align: middle;
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Apoie JURON fixo no canto superior direito - menor */
+    /* Apoie JURON fixo no canto inferior direito */
     .donation-fixed {
         position: fixed;
-        top: 20px;
+        bottom: 20px;
         right: 20px;
         background: rgba(10,10,10,0.92);
         border: 1px solid #333333;
-        border-radius: 10px;
-        padding: 12px;
-        width: 260px;
+        border-radius: 12px;
+        padding: 16px;
+        width: 300px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.7);
         z-index: 999;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         backdrop-filter: blur(8px);
     }
     .donation-title {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
         text-align: center;
         color: #dddddd;
     }
     .crypto-item {
-        margin: 8px 0;
+        margin: 10px 0;
         display: flex;
         align-items: center;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     .crypto-code {
         font-family: monospace;
         background: #111111;
-        padding: 6px;
+        padding: 8px;
         border-radius: 6px;
         word-break: break-all;
         flex: 1;
@@ -81,10 +94,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: APENAS "JURON" grande e branco
+# Logo principal: "JURON" com emojis jurídicos ao lado
 st.markdown("""
 <div class="logo-container">
-  <h1 class="title">JURON</h1>
+  <h1 class="title">
+    <span class="justice-emojis">⚖️ ⚒️ 📚</span>JURON<span class="justice-emojis">⚖️ ⚒️ 📚</span>
+  </h1>
 </div>
 """, unsafe_allow_html=True)
 
@@ -98,7 +113,7 @@ if uploaded_file is not None:
     if uploaded_file.type.startswith("image/"):
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
-        st.image(image_bytes, caption="Imagem enviada", use_column_width=True)
+        st.image(image_bytes, caption="Imagem enviada", width=400)
     else:
         st.warning("Apenas imagens (png/jpg).")
 
@@ -162,7 +177,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Apoie JURON fixo no canto superior direito - menor e discreto
+# Apoie JURON fixo no canto inferior direito
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
