@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - apenas nome JURON
+# Tema 100% preto + fundo com balança 3D flutuando
 st.markdown("""
 <style>
     :root {
@@ -13,80 +13,98 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp { background: var(--bg); color: var(--text); }
-    .stChatMessage {
-        background: #0a0a0a;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
+    .stApp {
+        background: var(--bg) url('https://images.unsplash.com/photo-1589829545856-d10d5b2e9a8f?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat fixed;
+        background-blend-mode: overlay;
+        background-color: rgba(0,0,0,0.85);
+        color: var(--text);
+        position: relative;
     }
-    .stChatMessage.user { border-left: 5px solid #555555; }
+    .stChatMessage {
+        background: rgba(10,10,10,0.85);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 14px;
+        backdrop-filter: blur(4px);
+    }
+    .stChatMessage.user { border-left: 5px solid #444444; }
     .stChatMessage.assistant { border-left: 5px solid #777777; }
     .stChatInput textarea {
-        background: #111111 !important;
+        background: rgba(17,17,17,0.9) !important;
         color: var(--text) !important;
         border: 1px solid #333333 !important;
+        border-radius: 8px;
     }
-    .logo-container { text-align: center; margin: 120px 0 60px; }
+    .logo-container {
+        text-align: center;
+        margin: 80px 0 50px;
+    }
     .title {
-        font-size: 5.5rem;
+        font-size: 5rem;
         font-weight: 900;
         color: #ffffff;
         text-align: center;
-        letter-spacing: 8px;
+        letter-spacing: 10px;
         text-transform: uppercase;
+        text-shadow: 0 0 20px rgba(255,255,255,0.15);
     }
-    hr { border-color: #222222; margin: 40px 0; }
+    hr { border-color: #1a1a1a; margin: 40px 0; }
+    /* Doações no canto inferior direito - discreto e fixo */
+    .donation-fixed {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.85);
+        border: 1px solid #333333;
+        border-radius: 12px;
+        padding: 16px;
+        width: 280px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        z-index: 999;
+        font-size: 0.9rem;
+        backdrop-filter: blur(6px);
+    }
+    .donation-title {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+        text-align: center;
+        color: #cccccc;
+    }
+    .crypto-item {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+    }
     .crypto-logo {
-        width: 40px;
-        height: 40px;
-        vertical-align: middle;
+        width: 28px;
+        height: 28px;
         margin-right: 10px;
+    }
+    .crypto-code {
+        font-family: monospace;
+        font-size: 0.85rem;
+        word-break: break-all;
+        color: #aaaaaa;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Logo: APENAS JURON (totalmente preto e branco)
-st.markdown("""
-<div class="logo-container">
-  <h1 class="title">JURON</h1>
-</div>
-""", unsafe_allow_html=True)
+# Logo principal: JURONON AI (sua imagem)
+st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+st.image(
+    "https://raw.githubusercontent.com/londcryptopunk/juron/main/juron%20logo.png",
+    use_column_width=False,
+    width=380
+)
+st.markdown('<h1 class="title">JURON</h1>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Seção de doações com logos reais de BTC e USDT
-st.subheader("💰 Apoie o JURON")
-st.markdown("Doações voluntárias ajudam a manter o projeto ativo e gratuito para todos.")
+# ======================= CHAT PRINCIPAL =======================
 
-donations = st.container()
-
-with donations:
-    col_pix, col_btc, col_bsc = st.columns(3)
-
-    with col_pix:
-        st.markdown("**PIX**")
-        st.image("qrcode47.png", width=180)
-        st.code("43999324592", language=None)
-
-    with col_btc:
-        st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">**Bitcoin (BTC)**', unsafe_allow_html=True)
-        st.code("1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg", language=None)
-
-    with col_bsc:
-        st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">**USDT - Rede BSC**', unsafe_allow_html=True)
-        st.code("0x4c20c6d93797b4d4707879354ed8ed9900fbbb98", language=None)
-
-st.markdown("---")
-
-# ======================= RESTO DO CÓDIGO =======================
-
-OPENROUTER_API_KEY = "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"
-
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-
-uploaded_file = st.file_uploader("Envie imagem (opcional)", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
 if uploaded_file is not None:
@@ -96,25 +114,20 @@ if uploaded_file is not None:
         st.image(image_bytes, caption="Imagem enviada", use_column_width=True)
 
 def chamar_juron(image_b64=None):
-    system_prompt = """Você é JURON, IA jurídica útil e direta.
-Especialista em Direito Brasileiro.
-
+    system_prompt = """Você é JURON, IA jurídica útil, direta e inteligente.
+Especialista em Direito Brasileiro (todas as áreas).
 Seja conversacional, siga o fluxo do usuário.
 Quando for análise de caso use estrutura simples:
 1. Resumo dos fatos
 2. Base legal
 3. Riscos e próximos passos
-
 Responda em português brasileiro.
 Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado habilitado. Consulte um profissional." """
-
     messages = [{"role": "system", "content": system_prompt}]
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
-
     if image_b64:
         messages[-1]["content"] += "\n\n[Descreva esta imagem no contexto jurídico se possível]"
-
     payload = {
         "model": "anthropic/claude-3-haiku",
         "messages": messages,
@@ -122,27 +135,23 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado 
         "max_tokens": 1500,
         "stream": False
     }
-
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost",
         "X-Title": "JURON"
     }
-
     try:
         resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=45)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
-    except requests.exceptions.HTTPError as e:
-        return f"Erro {resp.status_code}: {resp.text}\n\nVerifique a chave no dashboard: https://openrouter.ai/keys"
     except Exception as e:
-        return f"Erro geral: {str(e)}"
+        return f"Erro na API: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta'}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
-        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica ou enviar imagem.\n\nLembrete: sou IA, não substituo advogado."
+        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica, caso ou enviar uma imagem relacionada.\n\nLembrete: sou IA, não substituo advogado."
     }]
 
 for msg in st.session_state.messages:
@@ -152,7 +161,7 @@ for msg in st.session_state.messages:
 if prompt := st.chat_input("Sua dúvida ou caso..."):
     full_content = prompt
     if image_base64:
-        full_content += "\n\n[Imagem enviada]"
+        full_content += "\n\n[Imagem enviada para análise]"
     st.session_state.messages.append({"role": "user", "content": full_content})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -162,6 +171,28 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         resposta = chamar_juron(image_base64)
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
+
+# Doações fixas no canto inferior direito
+st.markdown("""
+<div class="donation-fixed">
+  <div class="donation-title">Apoie o JURON</div>
+  <div class="crypto-item">
+    <strong>PIX</strong><br>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pix_Brazil_logo.svg" class="crypto-logo" style="width:28px;height:28px;">
+    <div class="crypto-code">43999324592</div>
+  </div>
+  <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
+    <strong>BTC</strong><br>
+    <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
+  </div>
+  <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
+    <strong>USDT - BSC</strong><br>
+    <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 with st.sidebar:
     if st.button("Limpar conversa", use_container_width=True):
