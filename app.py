@@ -86,10 +86,9 @@ st.markdown("""
 # Logo principal: sua imagem nova (martelo + balão + texto)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
 st.image(
-    "https://raw.githubusercontent.com/londcryptopunk/juron/main/juron%20logo.png",  # ajuste se o nome do arquivo for diferente
+    "https://raw.githubusercontent.com/londcryptopunk/juron/main/d7c625d1-411c-0ef281adf1ae300.jpg",
     use_column_width=False,
-    width=420,
-    caption=None
+    width=420
 )
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -108,7 +107,7 @@ if uploaded_file is not None:
         st.warning("Apenas imagens (png/jpg).")
 
 def chamar_juron(image_b64=None):
-    system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
+    system_prompt = """Você é JURON, IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
 Seja natural e conversacional: responda de forma livre, siga o fluxo da conversa, faça perguntas para esclarecer se necessário, dê continuidade às dúvidas.
 Quando for análise de caso, mantenha estrutura simples:
@@ -173,15 +172,16 @@ st.markdown("""
   <div class="donation-title">Apoie o JURON</div>
   <div class="crypto-item">
     <strong>PIX</strong><br>
+    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/qrcode47.png" style="width:120px; margin:8px 0;">
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
+    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/Bitcoin.svg.png" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
+    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/Cryptocurrency-Tether-Usdt-Logo-Graphics-13...png" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
