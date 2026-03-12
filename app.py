@@ -29,9 +29,9 @@ st.markdown("""
         border: 1px solid #333333 !important;
         border-radius: 8px;
     }
-    .logo-container { 
-        text-align: center; 
-        margin: 100px 0 50px; 
+    .logo-container {
+        text-align: center;
+        margin: 100px 0 50px;
     }
     .title {
         font-size: 5.5rem;
@@ -43,7 +43,7 @@ st.markdown("""
         text-shadow: 0 0 20px rgba(255,255,255,0.1);
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Doações fixas no canto inferior direito */
+    /* Doações fixas no canto inferior direito - discreto */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
@@ -81,7 +81,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo: APENAS "JURON" grande e branco
+# Logo principal: APENAS "JURON" grande e branco
 st.markdown("""
 <div class="logo-container">
   <h1 class="title">JURON</h1>
@@ -90,7 +90,7 @@ st.markdown("""
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chat principal (prioridade total)
+# Chat principal
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -103,7 +103,7 @@ if uploaded_file is not None:
         st.warning("Apenas imagens (png/jpg).")
 
 def chamar_juron(image_b64=None):
-    system_prompt = """Você é JURON, IA jurídica útil, direta e inteligente.
+    system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
 Seja natural e conversacional: responda de forma livre, siga o fluxo da conversa, faça perguntas para esclarecer se necessário, dê continuidade às dúvidas.
 Quando for análise de caso, mantenha estrutura simples:
@@ -162,7 +162,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito (discretas)
+# Doações fixas no canto inferior direito (discretas e elegantes)
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
