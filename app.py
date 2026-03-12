@@ -36,7 +36,7 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 140px 0 80px;
+        margin: 120px 0 80px;
         position: relative;
     }
     .title {
@@ -49,15 +49,10 @@ st.markdown("""
         text-shadow: 0 0 30px rgba(255,255,255,0.08);
     }
     .justice-symbols {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 20rem;
-        color: rgba(255,255,255,0.06);
-        pointer-events: none;
-        z-index: -1;
-        white-space: nowrap;
+        font-size: 4rem;
+        color: rgba(255,255,255,0.25);
+        margin-bottom: 20px;
+        display: block;
     }
     hr { border-color: #222222; margin: 40px 0; }
     /* Apoie JURON fixo no canto inferior ESQUERDO */
@@ -87,6 +82,12 @@ st.markdown("""
         align-items: center;
         font-size: 0.9rem;
     }
+    .crypto-logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        border-radius: 50%;
+    }
     .crypto-code {
         font-family: monospace;
         background: #111111;
@@ -98,10 +99,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: SOMENTE "JURON" grande no centro + símbolos jurídicos sutis ao fundo
+# Logo principal: "JURON" grande + símbolos jurídicos ao lado (martelo, balança, livro)
 st.markdown("""
 <div class="logo-container">
-  <div class="justice-symbols">⚖️ ⚒️ 🏛️</div>
+  <div class="justice-symbols">⚖️ ⚒️ 📚</div>
   <h1 class="title">JURON</h1>
 </div>
 """, unsafe_allow_html=True)
@@ -138,7 +139,7 @@ Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui ad
     if image_b64:
         messages[-1]["content"] += "\n\n[Usuário enviou uma imagem. Como não posso analisá-la diretamente, pergunte detalhes ou peça descrição.]"
     payload = {
-        "model": "llama3-70b-8192",
+        "model": "llama-3.3-70b-versatile",
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 1500,
@@ -184,14 +185,17 @@ st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
   <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pix_Brazil_logo.svg" class="crypto-logo" style="width:40px;height:40px;">
     <strong>PIX</strong><br>
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
