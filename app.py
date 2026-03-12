@@ -38,10 +38,16 @@ st.markdown("""
         text-transform: uppercase;
     }
     hr { border-color: #222222; margin: 40px 0; }
+    .crypto-logo {
+        width: 40px;
+        height: 40px;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Logo: APENAS JURON
+# Logo: APENAS JURON (totalmente preto e branco)
 st.markdown("""
 <div class="logo-container">
   <h1 class="title">JURON</h1>
@@ -50,8 +56,33 @@ st.markdown("""
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chave OpenRouter (cole a NOVA chave aqui!)
-OPENROUTER_API_KEY = "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"
+# Seção de doações com logos reais de BTC e USDT
+st.subheader("💰 Apoie o JURON")
+st.markdown("Doações voluntárias ajudam a manter o projeto ativo e gratuito para todos.")
+
+donations = st.container()
+
+with donations:
+    col_pix, col_btc, col_bsc = st.columns(3)
+
+    with col_pix:
+        st.markdown("**PIX**")
+        st.image("qrcode47.png", width=180)
+        st.code("43999324592", language=None)
+
+    with col_btc:
+        st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">**Bitcoin (BTC)**', unsafe_allow_html=True)
+        st.code("1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg", language=None)
+
+    with col_bsc:
+        st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">**USDT - Rede BSC**', unsafe_allow_html=True)
+        st.code("0x4c20c6d93797b4d4707879354ed8ed9900fbbb98", language=None)
+
+st.markdown("---")
+
+# ======================= RESTO DO CÓDIGO =======================
+
+OPENROUTER_API_KEY = "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"
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -104,7 +135,7 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado 
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     except requests.exceptions.HTTPError as e:
-        return f"Erro {resp.status_code}: {resp.text}\n\nVerifique a chave API no dashboard OpenRouter."
+        return f"Erro {resp.status_code}: {resp.text}\n\nVerifique a chave no dashboard: https://openrouter.ai/keys"
     except Exception as e:
         return f"Erro geral: {str(e)}"
 
