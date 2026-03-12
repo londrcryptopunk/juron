@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - limpo e estiloso
+# Tema 100% preto - limpo, estiloso e sem distrações
 st.markdown("""
 <style>
     :root {
@@ -13,7 +13,10 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp { background: var(--bg); color: var(--text); }
+    .stApp { 
+        background: var(--bg); 
+        color: var(--text); 
+    }
     .stChatMessage {
         background: #0a0a0a;
         border: 1px solid var(--border);
@@ -39,17 +42,17 @@ st.markdown("""
         filter: drop-shadow(0 0 20px rgba(255,255,255,0.15));
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Doações fixas no canto inferior direito */
+    /* Doações fixas no canto inferior direito - discretas */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: rgba(10,10,10,0.9);
+        background: rgba(10,10,10,0.92);
         border: 1px solid #333333;
         border-radius: 12px;
         padding: 16px;
         width: 300px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.7);
         z-index: 999;
         font-size: 0.95rem;
         backdrop-filter: blur(8px);
@@ -83,7 +86,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: sua imagem nova (martelo + balão + texto)
+# Logo principal: sua imagem "JURON CONSULTA JURÍDICA" com martelo + balão
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
 st.image(
     "https://raw.githubusercontent.com/londcryptopunk/juron/main/d7c625d1-411c-0ef281adf1ae300.jpg",
@@ -94,7 +97,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chat principal
+# Chat principal (prioridade total)
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -107,7 +110,7 @@ if uploaded_file is not None:
         st.warning("Apenas imagens (png/jpg).")
 
 def chamar_juron(image_b64=None):
-    system_prompt = """Você é JURON, IA jurídica útil, direta e inteligente.
+    system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
 Seja natural e conversacional: responda de forma livre, siga o fluxo da conversa, faça perguntas para esclarecer se necessário, dê continuidade às dúvidas.
 Quando for análise de caso, mantenha estrutura simples:
