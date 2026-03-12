@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - limpo e profissional
+# Tema 100% preto - estilo jurídico sério e minimalista
 st.markdown("""
 <style>
     :root {
@@ -13,7 +13,10 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp { background: var(--bg); color: var(--text); }
+    .stApp { 
+        background: var(--bg); 
+        color: var(--text); 
+    }
     .stChatMessage {
         background: #0a0a0a;
         border: 1px solid var(--border);
@@ -31,11 +34,28 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 60px 0 40px;
+        margin: 120px 0 80px;
+        position: relative;
     }
-    .main-logo {
-        max-width: 420px;
-        height: auto;
+    .title {
+        font-size: 6.5rem;
+        font-weight: 900;
+        color: #ffffff;
+        text-align: center;
+        letter-spacing: 12px;
+        text-transform: uppercase;
+        text-shadow: 0 0 30px rgba(255,255,255,0.08);
+    }
+    .justice-symbols {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18rem;
+        color: rgba(255,255,255,0.07);
+        pointer-events: none;
+        z-index: -1;
+        white-space: nowrap;
     }
     hr { border-color: #222222; margin: 40px 0; }
     /* Doações fixas no canto inferior direito */
@@ -65,12 +85,6 @@ st.markdown("""
         align-items: center;
         font-size: 0.9rem;
     }
-    .crypto-logo {
-        width: 40px;
-        height: 40px;
-        margin-right: 12px;
-        border-radius: 50%;
-    }
     .crypto-code {
         font-family: monospace;
         background: #111111;
@@ -82,17 +96,17 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal (sua imagem com martelo + balão + texto)
-st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image(
-    "https://raw.githubusercontent.com/londcryptopunk/juron/main/d7c625d1-411c-0ef281adf1ae300.jpg",
-    width=420
-)
-st.markdown('</div>', unsafe_allow_html=True)
+# Logo principal: SOMENTE "JURON" grande no meio + símbolos jurídicos sutis ao fundo
+st.markdown("""
+<div class="logo-container">
+  <div class="justice-symbols">⚖️ ⚒️ 🏛️</div>
+  <h1 class="title">JURON</h1>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chat principal
+# Chat principal (prioridade total)
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -164,22 +178,19 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito
+# Doações fixas no canto inferior direito (com códigos limpos)
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
   <div class="crypto-item">
     <strong>PIX</strong><br>
-    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/qrcode47.png" style="width:120px; margin:8px 0;">
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
