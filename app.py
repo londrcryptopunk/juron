@@ -2,14 +2,14 @@ import streamlit as st
 import requests
 import base64
 
-# CHAVE API - declarada no topo para evitar NameError
-OPENROUTER_API_KEY = "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"
+# CHAVE GROQ (100% grátis, rápida e sem erro 401)
+GROQ_API_KEY = "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"
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - estilo jurídico sério
+# Tema 100% preto - estilo jurídico sério e minimalista
 st.markdown("""
 <style>
     :root {
@@ -36,7 +36,7 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 120px 0 80px;
+        margin: 140px 0 80px;
         position: relative;
     }
     .title {
@@ -47,7 +47,6 @@ st.markdown("""
         letter-spacing: 14px;
         text-transform: uppercase;
         text-shadow: 0 0 30px rgba(255,255,255,0.08);
-        display: inline-block;
     }
     .justice-emojis {
         font-size: 5rem;
@@ -56,37 +55,37 @@ st.markdown("""
         vertical-align: middle;
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Apoie JURON fixo no canto inferior direito */
+    /* Apoie JURON fixo no canto superior direito - menor e discreto */
     .donation-fixed {
         position: fixed;
-        bottom: 20px;
+        top: 20px;
         right: 20px;
         background: rgba(10,10,10,0.92);
         border: 1px solid #333333;
-        border-radius: 12px;
-        padding: 16px;
-        width: 300px;
+        border-radius: 10px;
+        padding: 12px;
+        width: 260px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.7);
         z-index: 999;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         backdrop-filter: blur(8px);
     }
     .donation-title {
-        font-size: 1.2rem;
-        margin-bottom: 12px;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
         text-align: center;
         color: #dddddd;
     }
     .crypto-item {
-        margin: 10px 0;
+        margin: 8px 0;
         display: flex;
         align-items: center;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     .crypto-code {
         font-family: monospace;
         background: #111111;
-        padding: 8px;
+        padding: 6px;
         border-radius: 6px;
         word-break: break-all;
         flex: 1;
@@ -94,11 +93,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: "JURON" com emojis jurídicos ao lado
+# Logo principal: "JURON" com apenas balança e livro ao lado
 st.markdown("""
 <div class="logo-container">
   <h1 class="title">
-    <span class="justice-emojis">⚖️ ⚒️ 📚</span>JURON<span class="justice-emojis">⚖️ ⚒️ 📚</span>
+    <span class="justice-emojis">⚖️ 📚</span>JURON<span class="justice-emojis">⚖️ 📚</span>
   </h1>
 </div>
 """, unsafe_allow_html=True)
@@ -114,6 +113,7 @@ if uploaded_file is not None:
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         st.image(image_bytes, caption="Imagem enviada", width=400)
+        st.info("Nota: Groq não analisa imagens diretamente. Descreva o conteúdo se quiser ajuda.")
     else:
         st.warning("Apenas imagens (png/jpg).")
 
@@ -132,26 +132,24 @@ Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui ad
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
     if image_b64:
-        messages[-1]["content"] += "\n\n[Descreva esta imagem no contexto jurídico se possível]"
+        messages[-1]["content"] += "\n\n[Usuário enviou uma imagem. Como não posso analisá-la diretamente, pergunte detalhes ou peça descrição.]"
     payload = {
-        "model": "anthropic/claude-3-haiku",
+        "model": "llama-3.3-70b-versatile",
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 1500,
         "stream": False
     }
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost",
-        "X-Title": "JURON"
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
     }
     try:
-        resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=45)
+        resp = requests.post(GROQ_URL, json=payload, headers=headers, timeout=30)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        return f"Erro na API: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta do servidor'}"
+        return f"Erro na API Groq: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta'}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
@@ -177,7 +175,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Apoie JURON fixo no canto inferior direito
+# Apoie JURON fixo no canto superior direito - menor e discreto
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
