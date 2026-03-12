@@ -31,19 +31,15 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 100px 0 50px;
+        margin: 60px 0 40px;
     }
-    .title {
-        font-size: 5.5rem;
-        font-weight: 900;
-        color: #ffffff;
-        text-align: center;
-        letter-spacing: 10px;
-        text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(255,255,255,0.1);
+    .main-logo {
+        max-width: 420px;
+        height: auto;
+        filter: drop-shadow(0 0 20px rgba(255,255,255,0.15));
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Doações fixas no canto inferior direito - discreto */
+    /* Doações fixas no canto inferior direito */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
@@ -70,6 +66,12 @@ st.markdown("""
         align-items: center;
         font-size: 0.9rem;
     }
+    .crypto-logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        border-radius: 50%;
+    }
     .crypto-code {
         font-family: monospace;
         background: #111111;
@@ -81,12 +83,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: APENAS "JURON" grande e branco
-st.markdown("""
-<div class="logo-container">
-  <h1 class="title">JURON</h1>
-</div>
-""", unsafe_allow_html=True)
+# Logo principal: sua imagem nova (martelo + balão + texto)
+st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+st.image(
+    "https://raw.githubusercontent.com/londcryptopunk/juron/main/juron%20logo.png",  # ajuste se o nome do arquivo for diferente
+    use_column_width=False,
+    width=420,
+    caption=None
+)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
@@ -162,7 +167,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito (discretas e elegantes)
+# Doações fixas no canto inferior direito (com logos reais)
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
@@ -171,10 +176,12 @@ st.markdown("""
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
