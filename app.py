@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto + fundo com balança 3D flutuando
+# Tema 100% preto - limpo e estiloso
 st.markdown("""
 <style>
     :root {
@@ -13,97 +13,84 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp {
-        background: var(--bg) url('https://images.unsplash.com/photo-1589829545856-d10d5b2e9a8f?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat fixed;
-        background-blend-mode: overlay;
-        background-color: rgba(0,0,0,0.85);
-        color: var(--text);
-        position: relative;
-    }
+    .stApp { background: var(--bg); color: var(--text); }
     .stChatMessage {
-        background: rgba(10,10,10,0.85);
+        background: #0a0a0a;
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 18px;
         margin-bottom: 14px;
-        backdrop-filter: blur(4px);
     }
     .stChatMessage.user { border-left: 5px solid #444444; }
     .stChatMessage.assistant { border-left: 5px solid #777777; }
     .stChatInput textarea {
-        background: rgba(17,17,17,0.9) !important;
+        background: #111111 !important;
         color: var(--text) !important;
         border: 1px solid #333333 !important;
         border-radius: 8px;
     }
-    .logo-container {
-        text-align: center;
-        margin: 80px 0 50px;
+    .logo-container { 
+        text-align: center; 
+        margin: 100px 0 50px; 
     }
     .title {
-        font-size: 5rem;
+        font-size: 5.5rem;
         font-weight: 900;
         color: #ffffff;
         text-align: center;
         letter-spacing: 10px;
         text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(255,255,255,0.15);
+        text-shadow: 0 0 20px rgba(255,255,255,0.1);
     }
-    hr { border-color: #1a1a1a; margin: 40px 0; }
-    /* Doações no canto inferior direito - discreto e fixo */
+    hr { border-color: #222222; margin: 40px 0; }
+    /* Doações fixas no canto inferior direito */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: rgba(0,0,0,0.85);
+        background: rgba(10,10,10,0.9);
         border: 1px solid #333333;
         border-radius: 12px;
         padding: 16px;
-        width: 280px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        width: 300px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         z-index: 999;
-        font-size: 0.9rem;
-        backdrop-filter: blur(6px);
+        font-size: 0.95rem;
+        backdrop-filter: blur(8px);
     }
     .donation-title {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         margin-bottom: 12px;
         text-align: center;
-        color: #cccccc;
+        color: #dddddd;
     }
     .crypto-item {
-        margin: 8px 0;
+        margin: 10px 0;
         display: flex;
         align-items: center;
-    }
-    .crypto-logo {
-        width: 28px;
-        height: 28px;
-        margin-right: 10px;
+        font-size: 0.9rem;
     }
     .crypto-code {
         font-family: monospace;
-        font-size: 0.85rem;
+        background: #111111;
+        padding: 8px;
+        border-radius: 6px;
         word-break: break-all;
-        color: #aaaaaa;
+        flex: 1;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: JURONON AI (sua imagem)
-st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image(
-    "https://raw.githubusercontent.com/londcryptopunk/juron/main/juron%20logo.png",
-    use_column_width=False,
-    width=380
-)
-st.markdown('<h1 class="title">JURON</h1>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+# Logo: APENAS "JURON" grande e branco
+st.markdown("""
+<div class="logo-container">
+  <h1 class="title">JURON</h1>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# ======================= CHAT PRINCIPAL =======================
-
+# Chat principal (prioridade total)
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -112,17 +99,20 @@ if uploaded_file is not None:
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         st.image(image_bytes, caption="Imagem enviada", use_column_width=True)
+    else:
+        st.warning("Apenas imagens (png/jpg).")
 
 def chamar_juron(image_b64=None):
     system_prompt = """Você é JURON, IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
-Seja conversacional, siga o fluxo do usuário.
-Quando for análise de caso use estrutura simples:
+Seja natural e conversacional: responda de forma livre, siga o fluxo da conversa, faça perguntas para esclarecer se necessário, dê continuidade às dúvidas.
+Quando for análise de caso, mantenha estrutura simples:
 1. Resumo dos fatos
-2. Base legal
-3. Riscos e próximos passos
-Responda em português brasileiro.
-Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado habilitado. Consulte um profissional." """
+2. Base legal (leis/artigos)
+3. Riscos e próximos passos práticos
+Responda sempre em português brasileiro fluente.
+Seja ético: nunca incentive nada ilegal.
+Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui advogado habilitado. Consulte um profissional." """
     messages = [{"role": "system", "content": system_prompt}]
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
@@ -146,7 +136,7 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado 
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        return f"Erro na API: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta'}"
+        return f"Erro na API: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta do servidor'}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
@@ -172,22 +162,19 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito
+# Doações fixas no canto inferior direito (discretas)
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
   <div class="crypto-item">
     <strong>PIX</strong><br>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pix_Brazil_logo.svg" class="crypto-logo" style="width:28px;height:28px;">
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
