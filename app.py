@@ -2,6 +2,11 @@ import streamlit as st
 import requests
 import base64
 
+# CHAVE API - substitua pela sua chave válida do OpenRouter
+OPENROUTER_API_KEY = "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"
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
 # Tema 100% preto - estilo jurídico sério e minimalista
@@ -34,15 +39,15 @@ st.markdown("""
     }
     .logo-container {
         text-align: center;
-        margin: 120px 0 80px;
+        margin: 140px 0 80px;
         position: relative;
     }
     .title {
-        font-size: 6.5rem;
+        font-size: 7rem;
         font-weight: 900;
         color: #ffffff;
         text-align: center;
-        letter-spacing: 12px;
+        letter-spacing: 14px;
         text-transform: uppercase;
         text-shadow: 0 0 30px rgba(255,255,255,0.08);
     }
@@ -51,8 +56,8 @@ st.markdown("""
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 18rem;
-        color: rgba(255,255,255,0.07);
+        font-size: 20rem;
+        color: rgba(255,255,255,0.06);
         pointer-events: none;
         z-index: -1;
         white-space: nowrap;
@@ -96,7 +101,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: SOMENTE "JURON" grande no meio + símbolos jurídicos sutis ao fundo
+# Logo principal: SOMENTE "JURON" grande no centro + símbolos jurídicos sutis ao fundo
 st.markdown("""
 <div class="logo-container">
   <div class="justice-symbols">⚖️ ⚒️ 🏛️</div>
@@ -106,7 +111,7 @@ st.markdown("""
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chat principal (prioridade total)
+# Chat principal
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -178,7 +183,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito (com códigos limpos)
+# Doações fixas no canto inferior direito (discretas)
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
