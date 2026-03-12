@@ -28,7 +28,7 @@ st.markdown("""
         color: var(--text) !important;
         border: 1px solid #333333 !important;
     }
-    .logo-container { text-align: center; margin: 100px 0 50px; }
+    .logo-container { text-align: center; margin: 120px 0 60px; }
     .title {
         font-size: 5.5rem;
         font-weight: 900;
@@ -41,7 +41,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo: APENAS o nome JURON (totalmente preto e branco)
+# Logo: APENAS JURON
 st.markdown("""
 <div class="logo-container">
   <h1 class="title">JURON</h1>
@@ -50,32 +50,12 @@ st.markdown("""
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# ======================= SEÇÃO DE DOAÇÕES =======================
-st.subheader("💰 Apoie o JURON")
-st.markdown("**Doações voluntárias ajudam a manter o projeto ativo.**")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("**PIX**")
-    st.image("qrcode47.png", width=180)
-    st.code("43999324592", language=None)
-
-with col2:
-    st.markdown("**Bitcoin (BTC)**")
-    st.code("1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg", language=None)
-
-with col3:
-    st.markdown("**Dólar - Rede BSC**")
-    st.code("0x4c20c6d93797b4d4707879354ed8ed9900fbbb98", language=None)
-
-st.markdown("---")
-
-# ======================= RESTO DO CÓDIGO =======================
+# Chave OpenRouter (cole a NOVA chave aqui!)
 OPENROUTER_API_KEY = "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"
+
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("Envie imagem (opcional)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
 if uploaded_file is not None:
@@ -85,19 +65,25 @@ if uploaded_file is not None:
         st.image(image_bytes, caption="Imagem enviada", use_column_width=True)
 
 def chamar_juron(image_b64=None):
-    system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
-Especialista em Direito Brasileiro (todas as áreas).
-Seja natural e conversacional. Quando for análise de caso use estrutura simples:
+    system_prompt = """Você é JURON, IA jurídica útil e direta.
+Especialista em Direito Brasileiro.
+
+Seja conversacional, siga o fluxo do usuário.
+Quando for análise de caso use estrutura simples:
 1. Resumo dos fatos
 2. Base legal
 3. Riscos e próximos passos
+
 Responda em português brasileiro.
 Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado habilitado. Consulte um profissional." """
+
     messages = [{"role": "system", "content": system_prompt}]
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
+
     if image_b64:
         messages[-1]["content"] += "\n\n[Descreva esta imagem no contexto jurídico se possível]"
+
     payload = {
         "model": "anthropic/claude-3-haiku",
         "messages": messages,
@@ -105,23 +91,27 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado 
         "max_tokens": 1500,
         "stream": False
     }
+
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost",
         "X-Title": "JURON"
     }
+
     try:
         resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=45)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
+    except requests.exceptions.HTTPError as e:
+        return f"Erro {resp.status_code}: {resp.text}\n\nVerifique a chave API no dashboard OpenRouter."
     except Exception as e:
-        return f"Erro: {str(e)}"
+        return f"Erro geral: {str(e)}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
-        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica ou enviar uma imagem.\n\nLembrete: sou IA, não substituo advogado."
+        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica ou enviar imagem.\n\nLembrete: sou IA, não substituo advogado."
     }]
 
 for msg in st.session_state.messages:
@@ -131,14 +121,14 @@ for msg in st.session_state.messages:
 if prompt := st.chat_input("Sua dúvida ou caso..."):
     full_content = prompt
     if image_base64:
-        full_content += "\n\n[Imagem enviada para análise]"
+        full_content += "\n\n[Imagem enviada]"
     st.session_state.messages.append({"role": "user", "content": full_content})
     with st.chat_message("user"):
         st.markdown(prompt)
         if image_base64:
             st.image(uploaded_file, width=400)
     with st.chat_message("assistant"):
-        resposta = chamar_juron(image_b64=image_base64)
+        resposta = chamar_juron(image_base64)
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
