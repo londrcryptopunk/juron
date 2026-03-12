@@ -2,10 +2,10 @@ import streamlit as st
 import requests
 import base64
 
-# CHAVE API - substitua pela sua chave válida do OpenRouter
-OPENROUTER_API_KEY = "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"
+# CHAVE GROQ - você forneceu
+GROQ_API_KEY = "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"
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
@@ -18,10 +18,7 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp { 
-        background: var(--bg); 
-        color: var(--text); 
-    }
+    .stApp { background: var(--bg); color: var(--text); }
     .stChatMessage {
         background: #0a0a0a;
         border: 1px solid var(--border);
@@ -63,11 +60,11 @@ st.markdown("""
         white-space: nowrap;
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Doações fixas no canto inferior direito */
+    /* Apoie JURON fixo no canto inferior ESQUERDO */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
-        right: 20px;
+        left: 20px;
         background: rgba(10,10,10,0.92);
         border: 1px solid #333333;
         border-radius: 12px;
@@ -120,6 +117,7 @@ if uploaded_file is not None:
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         st.image(image_bytes, caption="Imagem enviada", width=400)
+        st.info("Nota: Groq não analisa imagens diretamente. Descreva o conteúdo se quiser ajuda com ela.")
     else:
         st.warning("Apenas imagens (png/jpg).")
 
@@ -138,26 +136,24 @@ Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui ad
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
     if image_b64:
-        messages[-1]["content"] += "\n\n[Descreva esta imagem no contexto jurídico se possível]"
+        messages[-1]["content"] += "\n\n[Usuário enviou uma imagem. Como não posso analisá-la diretamente, pergunte detalhes ou peça descrição.]"
     payload = {
-        "model": "anthropic/claude-3-haiku",
+        "model": "llama3-70b-8192",
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 1500,
         "stream": False
     }
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost",
-        "X-Title": "JURON"
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
     }
     try:
-        resp = requests.post(OPENROUTER_URL, json=payload, headers=headers, timeout=45)
+        resp = requests.post(GROQ_URL, json=payload, headers=headers, timeout=30)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        return f"Erro na API: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta do servidor'}"
+        return f"Erro na API Groq: {str(e)}\n\nDetalhes: {resp.text if 'resp' in locals() else 'sem resposta'}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
@@ -183,7 +179,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito (discretas)
+# Apoie JURON fixo no canto inferior ESQUERDO
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
