@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - limpo, estiloso e sem distrações
+# Tema 100% preto - limpo e profissional
 st.markdown("""
 <style>
     :root {
@@ -13,10 +13,7 @@ st.markdown("""
         --accent: #ffffff;
         --border: #222222;
     }
-    .stApp { 
-        background: var(--bg); 
-        color: var(--text); 
-    }
+    .stApp { background: var(--bg); color: var(--text); }
     .stChatMessage {
         background: #0a0a0a;
         border: 1px solid var(--border);
@@ -39,10 +36,9 @@ st.markdown("""
     .main-logo {
         max-width: 420px;
         height: auto;
-        filter: drop-shadow(0 0 20px rgba(255,255,255,0.15));
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Doações fixas no canto inferior direito - discretas */
+    /* Doações fixas no canto inferior direito */
     .donation-fixed {
         position: fixed;
         bottom: 20px;
@@ -86,18 +82,17 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: sua imagem "JURON CONSULTA JURÍDICA" com martelo + balão
+# Logo principal (sua imagem com martelo + balão + texto)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
 st.image(
     "https://raw.githubusercontent.com/londcryptopunk/juron/main/d7c625d1-411c-0ef281adf1ae300.jpg",
-    use_column_width=False,
     width=420
 )
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# Chat principal (prioridade total)
+# Chat principal
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 
 image_base64 = None
@@ -105,7 +100,7 @@ if uploaded_file is not None:
     if uploaded_file.type.startswith("image/"):
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
-        st.image(image_bytes, caption="Imagem enviada", use_column_width=True)
+        st.image(image_bytes, caption="Imagem enviada", width=400)
     else:
         st.warning("Apenas imagens (png/jpg).")
 
@@ -169,7 +164,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# Doações fixas no canto inferior direito (com logos reais)
+# Doações fixas no canto inferior direito
 st.markdown("""
 <div class="donation-fixed">
   <div class="donation-title">Apoie o JURON</div>
@@ -179,12 +174,12 @@ st.markdown("""
     <div class="crypto-code">43999324592</div>
   </div>
   <div class="crypto-item">
-    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/Bitcoin.svg.png" class="crypto-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" class="crypto-logo">
     <strong>BTC</strong><br>
     <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
   </div>
   <div class="crypto-item">
-    <img src="https://raw.githubusercontent.com/londcryptopunk/juron/main/Cryptocurrency-Tether-Usdt-Logo-Graphics-13...png" class="crypto-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Tether_logo.svg" class="crypto-logo">
     <strong>USDT - BSC</strong><br>
     <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
   </div>
