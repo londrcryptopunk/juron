@@ -2,14 +2,14 @@ import streamlit as st
 import requests
 import base64
 
-# CHAVE GROQ (100% grátis, rápida e sem erro 401)
-GROQ_API_KEY = "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"
+# CHAVE GROQ (gratuita e rápida)
+GROQ_API_KEY = "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"
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema 100% preto - estilo jurídico sério e minimalista
+# Tema 100% preto - estilo jurídico minimalista
 st.markdown("""
 <style>
     :root {
@@ -55,45 +55,10 @@ st.markdown("""
         vertical-align: middle;
     }
     hr { border-color: #222222; margin: 40px 0; }
-    /* Apoie JURON fixo no canto superior direito - menor e discreto */
-    .donation-fixed {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(10,10,10,0.92);
-        border: 1px solid #333333;
-        border-radius: 10px;
-        padding: 12px;
-        width: 260px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.7);
-        z-index: 999;
-        font-size: 0.85rem;
-        backdrop-filter: blur(8px);
-    }
-    .donation-title {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        text-align: center;
-        color: #dddddd;
-    }
-    .crypto-item {
-        margin: 8px 0;
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
-    }
-    .crypto-code {
-        font-family: monospace;
-        background: #111111;
-        padding: 6px;
-        border-radius: 6px;
-        word-break: break-all;
-        flex: 1;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# Logo principal: "JURON" com apenas balança e livro ao lado
+# Logo: JURON com emojis de direito (balança e livro)
 st.markdown("""
 <div class="logo-container">
   <h1 class="title">
@@ -174,25 +139,6 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         resposta = chamar_juron(image_base64)
         st.markdown(resposta)
     st.session_state.messages.append({"role": "assistant", "content": resposta})
-
-# Apoie JURON fixo no canto superior direito - menor e discreto
-st.markdown("""
-<div class="donation-fixed">
-  <div class="donation-title">Apoie o JURON</div>
-  <div class="crypto-item">
-    <strong>PIX</strong><br>
-    <div class="crypto-code">43999324592</div>
-  </div>
-  <div class="crypto-item">
-    <strong>BTC</strong><br>
-    <div class="crypto-code">1PDgV1zEGKd2oDefucF7fmjTiaLNLKLZqg</div>
-  </div>
-  <div class="crypto-item">
-    <strong>USDT - BSC</strong><br>
-    <div class="crypto-code">0x4c20c6d93797b4d4707879354ed8ed9900fbbb98</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 with st.sidebar:
     if st.button("Limpar conversa", use_container_width=True):
