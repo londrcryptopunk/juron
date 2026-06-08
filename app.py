@@ -3,7 +3,7 @@ import requests
 import base64
 
 # CHAVE GROQ (gratuita e rápida)
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
