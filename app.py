@@ -3,8 +3,8 @@ import requests
 import base64
 
 # CHAVE GROQ (gratuita e rápida)
-GROQ_API_KEY = "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"
-
+GROQ_API_KEY = "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"
+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
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
