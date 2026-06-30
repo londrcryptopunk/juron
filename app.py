@@ -3,12 +3,9 @@ import requests
 import base64
 
 # ==================== CONFIGURAÇÕES ====================
-GROQ_API_KEY = "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"
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# Tema escuro jurídico
+# ==================== TEMA JURÍDICO ====================
 st.markdown("""
 <style>
     :root {
@@ -36,7 +33,6 @@ st.markdown("""
     .logo-container {
         text-align: center;
         margin: 140px 0 80px;
-        position: relative;
     }
     .title {
         font-size: 7rem;
@@ -77,22 +73,22 @@ if uploaded_file is not None:
         image_bytes = uploaded_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         st.image(image_bytes, caption="Imagem enviada", width=400)
-        st.info("Nota: Groq não analisa imagens diretamente. Descreva o conteúdo se quiser ajuda.")
+        st.info("Nota: A IA não analisa imagens diretamente. Descreva o conteúdo.")
     else:
         st.warning("Apenas imagens (png/jpg).")
 
-# Função para chamar a API
+# ==================== FUNÇÃO DA API ====================
 def chamar_juron(image_b64=None):
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except:
+        return "❌ Chave da API não configurada. Adicione em .streamlit/secrets.toml"
+
     system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
-Seja natural e conversacional: responda de forma livre, siga o fluxo da conversa, faça perguntas para esclarecer se necessário.
-Quando for análise de caso, mantenha estrutura simples:
-1. Resumo dos fatos
-2. Base legal (leis/artigos)
-3. Riscos e próximos passos práticos
-Responda sempre em português brasileiro fluente.
-Seja ético: nunca incentive nada ilegal.
-Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui advogado habilitado. Consulte um profissional." """
+Seja natural e conversacional. Responda em português brasileiro fluente.
+Estrutura para análise de caso: 1. Resumo 2. Base legal 3. Riscos e próximos passos.
+Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado habilitado." """
 
     messages = [{"role": "system", "content": system_prompt}]
     
@@ -100,52 +96,49 @@ Finalize toda resposta com: "Esta é uma análise geral de IA. Não substitui ad
         messages.append({"role": m["role"], "content": m["content"]})
 
     if image_b64:
-        messages[-1]["content"] += "\n\n[Usuário enviou uma imagem. Como não posso analisá-la diretamente, pergunte detalhes ou peça descrição.]"
+        messages[-1]["content"] += "\n\n[Imagem enviada. Peça descrição ao usuário.]"
 
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": messages,
         "temperature": 0.7,
-        "max_tokens": 1200,
+        "max_tokens": 1100,
         "stream": False
     }
 
     headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
 
     try:
-        resp = requests.post(GROQ_URL, json=payload, headers=headers, timeout=40)
+        resp = requests.post("https://api.groq.com/openai/v1/chat/completions", 
+                           json=payload, headers=headers, timeout=40)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
     
     except requests.exceptions.HTTPError as e:
         if resp.status_code == 429:
-            return "❌ Limite diário da API Groq atingido (100k tokens). Tente novamente amanhã ou use outra chave/API."
-        else:
-            return f"Erro na API Groq ({resp.status_code}): {str(e)}"
-    
+            return "❌ Limite da API Groq atingido. Tente novamente mais tarde."
+        return f"Erro na API ({resp.status_code}): {str(e)}"
     except Exception as e:
         return f"Erro inesperado: {str(e)}"
 
-# Inicializa mensagens
+# ==================== CHAT ====================
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
-        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica, caso ou enviar uma imagem relacionada.\n\nLembrete: sou IA, não substituo advogado."
+        "content": "Oi! Sou o JURON. Pode mandar sua dúvida jurídica ou enviar uma imagem.\n\nLembrete: sou IA, não substituo advogado."
     }]
 
-# Exibe histórico
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Input do usuário
 if prompt := st.chat_input("Sua dúvida ou caso..."):
     full_content = prompt
     if image_base64:
-        full_content += "\n\n[Imagem enviada para análise]"
+        full_content += "\n\n[Imagem enviada]"
 
     st.session_state.messages.append({"role": "user", "content": full_content})
     
@@ -155,7 +148,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
             st.image(uploaded_file, width=400)
 
     with st.chat_message("assistant"):
-        with st.spinner("JURON pensando..."):
+        with st.spinner("JURON analisando..."):
             resposta = chamar_juron(image_base64)
             st.markdown(resposta)
     
