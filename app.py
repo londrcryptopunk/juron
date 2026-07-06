@@ -5,8 +5,8 @@ import base64
 # ==================== CONFIGURAÇÕES ====================
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
-# ==================== API KEY DIRETO NO CÓDIGO ====================
-GROQ_API_KEY = "gsk_9f99Hv1PuVRb189Ec6b6Gdyb3FYFTdnBqnoxj61XGemkoho8Z6"
+# ==================== GROQ API KEY ====================
+GROQ_API_KEY = "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"
 
 # ==================== TEMA JURÍDICO ====================
 st.markdown("""
@@ -80,10 +80,10 @@ if uploaded_file is not None:
 
 # ==================== FUNÇÃO DA API ====================
 def chamar_juron(image_b64=None):
-    try:
-        api_key = GROQ_API_KEY  # ← Key direto no código
-    except:
-        return "❌ Chave da API não configurada."
+    api_key = GROQ_API_KEY.strip()
+    
+    if not api_key or len(api_key) < 20:
+        return "❌ Chave da API não configurada corretamente."
 
     system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
@@ -109,6 +109,7 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitua advogado 
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
+
     try:
         resp = requests.post("https://api.groq.com/openai/v1/chat/completions",
                            json=payload, headers=headers, timeout=40)
@@ -116,6 +117,8 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitua advogado 
         return resp.json()["choices"][0]["message"]["content"]
    
     except requests.exceptions.HTTPError as e:
+        if resp.status_code == 401:
+            return "❌ Erro 401: Chave da API inválida ou expirada. Gere uma nova chave."
         if resp.status_code == 429:
             return "❌ Limite da API Groq atingido. Tente novamente mais tarde."
         return f"Erro na API ({resp.status_code}): {str(e)}"
@@ -143,6 +146,7 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
         st.markdown(prompt)
         if image_base64:
             st.image(uploaded_file, width=400)
+    
     with st.chat_message("assistant"):
         with st.spinner("JURON analisando..."):
             resposta = chamar_juron(image_base64)
