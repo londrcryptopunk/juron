@@ -5,6 +5,9 @@ import base64
 # ==================== CONFIGURAÇÕES ====================
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
+# ==================== API KEY DIRETO NO CÓDIGO ====================
+GROQ_API_KEY = "gsk_9f99Hv1PuVRb189Ec6b6Gdyb3FYFTdnBqnoxj61XGemkoho8Z6"
+
 # ==================== TEMA JURÍDICO ====================
 st.markdown("""
 <style>
@@ -61,13 +64,11 @@ st.markdown("""
   </h1>
 </div>
 """, unsafe_allow_html=True)
-
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # Upload de imagem
 uploaded_file = st.file_uploader("Envie imagem (opcional - print, contrato, email...)", type=["png", "jpg", "jpeg"])
 image_base64 = None
-
 if uploaded_file is not None:
     if uploaded_file.type.startswith("image/"):
         image_bytes = uploaded_file.read()
@@ -80,21 +81,20 @@ if uploaded_file is not None:
 # ==================== FUNÇÃO DA API ====================
 def chamar_juron(image_b64=None):
     try:
-        api_key = st.secrets["GROQ_API_KEY"]
+        api_key = GROQ_API_KEY  # ← Key direto no código
     except:
-        return "❌ Chave da API não configurada. Adicione em .streamlit/secrets.toml"
+        return "❌ Chave da API não configurada."
 
     system_prompt = """Você é JURON, uma IA jurídica útil, direta e inteligente.
 Especialista em Direito Brasileiro (todas as áreas).
 Seja natural e conversacional. Responda em português brasileiro fluente.
 Estrutura para análise de caso: 1. Resumo 2. Base legal 3. Riscos e próximos passos.
-Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado habilitado." """
+Finalize sempre com: "Esta é uma análise geral de IA. Não substitua advogado habilitado." """
 
     messages = [{"role": "system", "content": system_prompt}]
-    
+   
     for m in st.session_state.messages:
         messages.append({"role": m["role"], "content": m["content"]})
-
     if image_b64:
         messages[-1]["content"] += "\n\n[Imagem enviada. Peça descrição ao usuário.]"
 
@@ -105,18 +105,16 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitui advogado 
         "max_tokens": 1100,
         "stream": False
     }
-
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-
     try:
-        resp = requests.post("https://api.groq.com/openai/v1/chat/completions", 
+        resp = requests.post("https://api.groq.com/openai/v1/chat/completions",
                            json=payload, headers=headers, timeout=40)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
-    
+   
     except requests.exceptions.HTTPError as e:
         if resp.status_code == 429:
             return "❌ Limite da API Groq atingido. Tente novamente mais tarde."
@@ -139,19 +137,17 @@ if prompt := st.chat_input("Sua dúvida ou caso..."):
     full_content = prompt
     if image_base64:
         full_content += "\n\n[Imagem enviada]"
-
     st.session_state.messages.append({"role": "user", "content": full_content})
-    
+   
     with st.chat_message("user"):
         st.markdown(prompt)
         if image_base64:
             st.image(uploaded_file, width=400)
-
     with st.chat_message("assistant"):
         with st.spinner("JURON analisando..."):
             resposta = chamar_juron(image_base64)
             st.markdown(resposta)
-    
+   
     st.session_state.messages.append({"role": "assistant", "content": resposta})
 
 # Sidebar
