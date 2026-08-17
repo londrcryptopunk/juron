@@ -99,26 +99,33 @@ Finalize sempre com: "Esta é uma análise geral de IA. Não substitua advogado 
         messages[-1]["content"] += "\n\n[Imagem enviada. Peça descrição ao usuário.]"
 
     payload = {
-        "model": "llama-3.3-70b-versatile",
+        "model": "openai/gpt-oss-120b",          # ← Modelo atualizado (o antigo foi desativado)
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 1100,
         "stream": False
     }
+    
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
 
     try:
-        resp = requests.post("https://api.groq.com/openai/v1/chat/completions",
-                           json=payload, headers=headers, timeout=40)
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            json=payload,
+            headers=headers,
+            timeout=40
+        )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
    
     except requests.exceptions.HTTPError as e:
         if resp.status_code == 401:
-            return "❌ Erro 401: Chave da API inválida ou expirada. Gere uma nova chave."
+            return "❌ Erro 401: Chave da API inválida ou expirada. Gere uma nova chave em console.groq.com/keys"
+        if resp.status_code == 404:
+            return "❌ Erro 404: Modelo não encontrado. O modelo antigo foi desativado."
         if resp.status_code == 429:
             return "❌ Limite da API Groq atingido. Tente novamente mais tarde."
         return f"Erro na API ({resp.status_code}): {str(e)}"
