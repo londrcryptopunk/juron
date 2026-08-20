@@ -6,7 +6,7 @@ import base64
 st.set_page_config(page_title="JURON ⚖️", page_icon="⚖️", layout="wide")
 
 # ==================== GROQ API KEY ====================
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 
 # ==================== TEMA JURÍDICO ====================
 st.markdown("""
